@@ -14,7 +14,7 @@ fi
 
 for hdd in "${hdds[@]}"; do
 
-    smartctl_out=$( smartctl -A /dev/$hdd )
+    smartctl_out=$( smartctl -a /dev/$hdd )
 
     # ATA
     temp=$( echo "$smartctl_out" | grep "Temperature_Celsius" | \
@@ -30,10 +30,25 @@ awk '{print $(( NF - 1 ))}' )
     if [[ $temp != "" ]]; then
         echo "$hdd: ${temp}C"
 
-        temp=40
-        if [[ $temp -ge $TEMP_THRESHOLD ]]; then
-            echo "HDD temp is over ${TEMP_THRESHOLD}C! Initiating emergency \
-poweroff..." >&2
+        # temp=41
+        if [[ $temp -gt $TEMP_THRESHOLD ]]; then
+
+            title="Emergency shutdown on $( hostname )!"
+
+            hdd_info=$( echo "$smartctl_out" | egrep -i "device model:|product:|serial number:" )
+
+            err_msg="$hdd_info\n\nHDD temp (${temp}C) is over ${TEMP_THRESHOLD}C! Initiating emergency \
+poweroff..."
+
+            # Log to stderr
+            echo -e "\n${title}\n\n${err_msg}\n" >&2
+
+            # Broadcast to wall
+            echo -e "\n${title}\n\n${err_msg}\n" | wall
+
+            # Send email
+            (echo "Subject: $title"; echo; echo -e "$err_msg") | sendmail klangga@gmail.com
+
             echo "poweroff"
             break
         fi
