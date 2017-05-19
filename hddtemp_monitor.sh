@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEMP_THRESHOLD=40
+TEMP_THRESHOLD=45
 
 # Get list of hdds
 if [[ $OSTYPE == "linux-gnu" ]]; then
@@ -22,7 +22,6 @@ awk '{print $10}' )
 
     # SCSI
     if [[ $temp == "" ]]; then
-        # echo "trying scsi..."
         temp=$( echo "$smartctl_out" | grep "Current Drive Temperature" | \
 awk '{print $(( NF - 1 ))}' )
     fi
@@ -30,7 +29,6 @@ awk '{print $(( NF - 1 ))}' )
     if [[ $temp != "" ]]; then
         echo "$hdd: ${temp}C"
 
-        # temp=41
         if [[ $temp -gt $TEMP_THRESHOLD ]]; then
 
             title="Emergency shutdown on $( hostname )!"
@@ -47,9 +45,9 @@ poweroff..."
             echo -e "\n${title}\n\n${err_msg}\n" | wall
 
             # Send email
-            (echo "Subject: $title"; echo; echo -e "$err_msg") | sendmail klangga@gmail.com
+            (echo "Subject: $title"; echo; echo -e "$err_msg") | sendmail server-admins@dream.upd.edu.ph
 
-            echo "poweroff"
+            poweroff
             break
         fi
     fi
