@@ -45,7 +45,7 @@ poweroff..."
             echo -e "\n${title}\n\n${err_msg}\n" | wall
 
             # Send email
-            (echo "Subject: $title"; echo; echo -e "$err_msg") | sendmail server-admins@dream.upd.edu.ph
+            (echo "Subject: $title"; echo; echo -e "$err_msg") | sendmail dad@dream.upd.edu.ph
 
             poweroff
             break
