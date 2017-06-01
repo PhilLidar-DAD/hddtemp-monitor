@@ -1,5 +1,6 @@
 #!/bin/bash
 
+VM_HOST=""
 TEMP_THRESHOLD=45
 
 # Get list of hdds
@@ -30,8 +31,8 @@ awk '{print $(( NF - 1 ))}' )
         echo "$hdd: ${temp}C"
 
         if [[ $temp -gt $TEMP_THRESHOLD ]]; then
-
-            title="Emergency shutdown on $( hostname )!"
+			HOST="${VM_HOST:+$VM_HOST & }$(hostname)"
+            title="Emergency shutdown on $HOST)!"
 
             hdd_info=$( echo "$smartctl_out" | egrep -i "device model:|product:|serial number:" )
 
@@ -47,6 +48,10 @@ poweroff..."
             # Send email
             (echo "Subject: $title"; echo; echo -e "$err_msg") | sendmail dad@dream.upd.edu.ph
 
+			#shutdown the host
+			if [[ -n $VM_HOST ]]; then
+				ssh root@#VM_HOST poweroff
+			fi
             poweroff
             break
         fi
