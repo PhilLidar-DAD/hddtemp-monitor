@@ -1,6 +1,7 @@
 #!/bin/bash
 
 TEMP_THRESHOLD=45
+VM_HOST="pmsat-proxmox2.srv.dream.upd.edu.ph"
 
 # Get list of hdds
 if [[ $OSTYPE == "linux-gnu" ]]; then
@@ -31,6 +32,7 @@ awk '{print $(( NF - 1 ))}' )
 
         if [[ $temp -gt $TEMP_THRESHOLD ]]; then
 
+			HOST="${{VM_HOST:+$VM_HOST & }$(hostname)}"
             title="Emergency shutdown on $( hostname )!"
 
             hdd_info=$( echo "$smartctl_out" | egrep -i "device model:|product:|serial number:" )
@@ -56,8 +58,14 @@ poweroff..."
 			# Allow message to be sent
 			sleep 10
 
+			#shutdown the host
+			if [[ -n $VM_HOST ]]; then
+				ssh root@#VM_HOST poweroff
+			fi
+
             poweroff
-            break
+
+			break
         fi
     fi
 
