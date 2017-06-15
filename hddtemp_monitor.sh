@@ -41,6 +41,9 @@ poweroff..."
             # Log to stderr
             echo -e "\n${title}\n\n${err_msg}\n" >&2
 
+            # Log to syslog
+            echo -e "\n${title}\n\n${err_msg}\n" | logger
+
             # Broadcast to wall
             echo -e "\n${title}\n\n${err_msg}\n" | wall
 
