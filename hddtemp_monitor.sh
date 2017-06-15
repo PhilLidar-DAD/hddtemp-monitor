@@ -2,6 +2,8 @@
 
 TEMP_THRESHOLD=45
 
+echo -e "Checking HDD temps..." | logger
+
 # Get list of hdds
 if [[ $OSTYPE == "linux-gnu" ]]; then
     hdds=($( ls -ahl /dev/disk/by-id/ | egrep "ata|scsi" | grep -v "part" | \
