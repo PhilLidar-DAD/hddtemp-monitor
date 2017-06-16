@@ -49,14 +49,14 @@ poweroff..."
             # Broadcast to wall
             echo -e "\n${title}\n\n${err_msg}\n" | wall
 
-			# Send to slack
-			(echo "$title"; echo; echo -e "$err_msg") | slacktee.sh -e "Date and Time" "$(date)" -u "$(hostname)" -a "good" -o "danger" "^Emergency" > /dev/null
+            # Send to slack
+            (echo "$title"; echo; echo -e "$err_msg") | slacktee.sh -e "Date and Time" "$(date)" -u "$(hostname)" -a "good" -o "danger" "^Emergency" > /dev/null
 
-			# Send email
+            # Send email
             (echo "Subject: $title"; echo; echo -e "$err_msg") | sendmail dad@dream.upd.edu.ph
 
-			# Allow message to be sent
-			sleep 10
+            # Allow message to be sent
+            sleep 10
 
             poweroff
             break
