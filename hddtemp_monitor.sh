@@ -1,6 +1,8 @@
 #!/bin/bash
 
 TEMP_THRESHOLD=45
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# echo "$SCRIPT_DIR"
 
 echo -e "Checking HDD temps..." | logger
 
@@ -50,13 +52,13 @@ poweroff..."
             echo -e "\n${title}\n\n${err_msg}\n" | wall
 
             # Send to slack
-            (echo "$title"; echo; echo -e "$err_msg") | slacktee.sh -e "Date and Time" "$(date)" -u "$(hostname)" -a "good" -o "danger" "^Emergency" > /dev/null
+            (echo "$title"; echo; echo -e "$err_msg") | ${SCRIPT_DIR}/slacktee.sh -e "Date and Time" "$(date)" -u "$(hostname)" -a "good" -o "danger" "^Emergency" > /dev/null
 
             # Send email
             (echo "Subject: $title"; echo; echo -e "$err_msg") | sendmail dad@dream.upd.edu.ph
 
             # Allow message to be sent
-            sleep 10
+            sleep 60
 
             poweroff
             break
